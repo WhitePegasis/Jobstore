@@ -1,18 +1,41 @@
 package com.example.jobstore.Modals;
 
 public class JobDetailModal {
-    private String companyName,packageAmount,jobType,endDate,jobLink;
+    private String companyName,packageAmount,jobType,endDate,jobLink, postedBy, jobId;
     private Integer upVote,downVote;
 
-    public JobDetailModal(String companyName, String packageAmount, String jobType, String endDate, String jobLink, Integer upVote, Integer downVote) {
+    public JobDetailModal() {
+    }
+
+    public JobDetailModal(String companyName, String packageAmount,
+                          String jobType, String endDate, String jobLink, Integer upVote, Integer downVote, String postedBy) {
         this.companyName = companyName;
         this.packageAmount = packageAmount;
         this.jobType = jobType;
         this.endDate = endDate;
         this.jobLink = jobLink;
+        this.postedBy = postedBy;
         this.upVote = upVote;
         this.downVote = downVote;
     }
+
+    public String getPostedBy() {
+        return postedBy;
+    }
+
+    public void setPostedBy(String postedBy) {
+        this.postedBy = postedBy;
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
+
+
 
     public String getCompanyName() {
         return companyName;

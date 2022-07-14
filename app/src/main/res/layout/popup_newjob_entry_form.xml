@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/companyNameTv"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="271dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="70dp"
+        android:hint="Company Name"
+        android:textColorHint="#A7A7A7"
+        app:boxStrokeColor="#EAEAEE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputCompanyName"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:textColor="#5B5B5B"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/packageAmountTv"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="271dp"
+        android:layout_height="63dp"
+        android:hint="Package"
+        android:textColorHint="#A7A7A7"
+        app:boxStrokeColor="#EAEAEE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/companyNameTv">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputPackageAmount"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:textColor="#5B5B5B"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/jobTypeTv"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="271dp"
+        android:layout_height="63dp"
+        android:hint="Internship / Full Time"
+        android:textColorHint="#A7A7A7"
+        app:boxStrokeColor="#EAEAEE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/packageAmountTv">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputJobType"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:textColor="#5B5B5B"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/endDateTv"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="271dp"
+        android:layout_height="63dp"
+        android:hint="Last Date"
+        android:textColorHint="#A7A7A7"
+        app:boxStrokeColor="#EAEAEE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/jobTypeTv">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:inputType="date"
+            android:textColor="#5B5B5B"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/jobLinkTv"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="271dp"
+        android:layout_height="63dp"
+        android:hint="Job Apply Link"
+        android:textColorHint="#A7A7A7"
+        app:boxStrokeColor="#EAEAEE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/endDateTv">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputJobLink"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:textColor="#5B5B5B"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/postBtn"
+        android:layout_width="105dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="20dp"
+        android:text="POST"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cancelBtn"
+        app:layout_constraintTop_toBottomOf="@id/jobLinkTv"
+        android:backgroundTint="#55D15A"
+        android:layout_marginBottom="50dp"/>
+
+    <Button
+        android:id="@+id/cancelBtn"
+        android:layout_width="105dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="50dp"
+        android:text="Cancel"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="#C10C0C"
+        app:layout_constraintEnd_toStartOf="@+id/postBtn"
+        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/jobLinkTv" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
