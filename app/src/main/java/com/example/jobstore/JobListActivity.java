@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.RecoverySystem;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -101,9 +105,12 @@ public class JobListActivity extends AppCompatActivity {
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addNewJobToDatabase();
-                Toast.makeText(JobListActivity.this, "Posted", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                if(checkAllFieldsAreFilledProperly()){
+                    addNewJobToDatabase();
+                    Toast.makeText(JobListActivity.this, "Posted", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+
             }
         });
 
@@ -117,6 +124,33 @@ public class JobListActivity extends AppCompatActivity {
         });
     }
 
+    private boolean checkAllFieldsAreFilledProperly() {
+
+        if(companyName.getText().toString().isEmpty()){
+            Toast.makeText(this, "Enter company name", Toast.LENGTH_SHORT).show();
+        }
+        else if(packageValue.getText().toString().isEmpty()){
+            Toast.makeText(this, "Enter package amount", Toast.LENGTH_SHORT).show();
+        }
+
+        else if(jobType.getText().toString().isEmpty()){
+            Toast.makeText(this, "Enter job type", Toast.LENGTH_SHORT).show();
+        }
+
+        else if(lastDate.getText().toString().isEmpty()){
+            Toast.makeText(this, "Enter end date to apply", Toast.LENGTH_SHORT).show();
+        }
+
+        else if(jobLink.getText().toString().isEmpty()){
+            Toast.makeText(this, "Enter Job apply link", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            return true;
+        }
+
+        return false;
+    }
+
     //pushing new job details to firebase
     private void addNewJobToDatabase() {
 
@@ -127,5 +161,32 @@ public class JobListActivity extends AppCompatActivity {
 
         ref.push().setValue(details);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.menu1,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(this, "Logging out", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(JobListActivity.this,LogInWithEmailPassword.class));
+                break;
+
+            case R.id.settings:
+                Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show();
+                break;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+        return true;
     }
 }

@@ -27,7 +27,6 @@ public class OptionsAfterSignIn extends AppCompatActivity {
 
 
 
-
     }
 
 }

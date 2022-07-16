@@ -30,4 +30,5 @@
         tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck"
         android:contentDescription="TODO"
         android:focusable="true" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
