@@ -24,6 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="sample headline"
+                android:textIsSelectable="true"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:padding="8dp"/>
@@ -33,6 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="sample description"
                 android:layout_marginTop="6dp"
+                android:textIsSelectable="true"
                 android:padding="4dp"/>
             <TextView
                 android:id="@+id/jobTypeTv"
@@ -40,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="sample description"
                 android:layout_marginTop="6dp"
+                android:textIsSelectable="true"
                 android:padding="4dp"/>
             <TextView
                 android:id="@+id/endDateTv"
@@ -47,12 +50,15 @@
                 android:layout_height="wrap_content"
                 android:text="sample description"
                 android:layout_marginTop="6dp"
+                android:textIsSelectable="true"
                 android:padding="4dp"/>
             <TextView
                 android:id="@+id/jobLinkTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="sample description"
+                android:autoLink="web"
+                android:textIsSelectable="true"
                 android:layout_marginTop="6dp"
                 android:padding="4dp"/>
 
@@ -62,30 +68,46 @@
                 android:layout_height="wrap_content"
                 android:text="sample description"
                 android:layout_marginTop="6dp"
-                android:padding="4dp"/>
+                android:padding="4dp"
+                android:textIsSelectable="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right"
+                >
                 <ImageView
                     android:id="@+id/upVoteImg"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_upvote"
                     android:padding="5dp"
-                    android:scaleType="centerInside"/>
+                    android:scaleType="centerInside"
+                    />
 
                 <ImageView
                     android:id="@+id/downVoteImg"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_downvote"
                     android:padding="5dp"
-                    android:scaleType="centerInside"/>
+                    android:scaleType="centerInside"
+                    android:layout_gravity="left"
+                    />
+
+                <ImageView
+                    android:id="@+id/deletePostImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_deletepost"
+                    android:visibility="gone"/>
             </LinearLayout>
 
         </LinearLayout>
-
 
     </LinearLayout>
 

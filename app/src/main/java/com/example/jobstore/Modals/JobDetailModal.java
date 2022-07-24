@@ -8,7 +8,7 @@ public class JobDetailModal {
     }
 
     public JobDetailModal(String companyName, String packageAmount,
-                          String jobType, String endDate, String jobLink, Integer upVote, Integer downVote, String postedBy) {
+                          String jobType, String endDate, String jobLink, Integer upVote, Integer downVote, String postedBy, String jobId) {
         this.companyName = companyName;
         this.packageAmount = packageAmount;
         this.jobType = jobType;
@@ -17,6 +17,7 @@ public class JobDetailModal {
         this.postedBy = postedBy;
         this.upVote = upVote;
         this.downVote = downVote;
+        this.jobId=jobId;
     }
 
     public String getPostedBy() {

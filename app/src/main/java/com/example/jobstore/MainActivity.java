@@ -24,14 +24,14 @@ public class MainActivity extends AppCompatActivity {
         auth=FirebaseAuth.getInstance();
         user=auth.getCurrentUser();
 
+        Intent intent;
         if(user!=null){
-            Intent intent=new Intent(MainActivity.this, JobListActivity.class);
-            startActivity(intent);
+            intent = new Intent(MainActivity.this, OptionsAfterSignIn.class);
         }
         else{
-            Intent intent=new Intent(MainActivity.this, SignUpWithEmailPassword.class);
-            startActivity(intent);
+            intent = new Intent(MainActivity.this, SignUpWithEmailPassword.class);
         }
+        startActivity(intent);
 
     }
 }

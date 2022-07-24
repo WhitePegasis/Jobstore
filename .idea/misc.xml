@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/drawable/background.xml" value="0.1695" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/drawable/ic_add.xml" value="0.252" />
+        <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/drawable/ic_deletepost.xml" value="0.118" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/drawable/side_nav_bar.xml" value="0.212" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.1" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1" />
@@ -24,6 +25,7 @@
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/layout/fragment_home.xml" value="0.2" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/layout/fragment_slideshow.xml" value="0.24635416666666668" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/layout/nav_header_main1.xml" value="0.24635416666666668" />
+        <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/layout/popup_enterstore_form.xml" value="0.24635416666666668" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/layout/popup_newjob_entry_form.xml" value="0.16944444444444445" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/menu/activity_main_drawer.xml" value="0.24635416666666668" />
         <entry key="..\:/Users/white/AndroidStudioProjects/Jobstore/app/src/main/res/menu/main_activity1.xml" value="0.24635416666666668" />

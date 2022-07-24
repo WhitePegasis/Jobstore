@@ -44,8 +44,9 @@ public class SignUpWithEmailPassword extends AppCompatActivity {
                     binding.inputPassword.setError("Enter a password");
                 }
                 //checking if password and confirm password value is same
-                else if(binding.inputPassword.getText().toString() != binding.inputCnfPassword.getText().toString()){
+                else if(!binding.inputPassword.getText().toString().equals(binding.inputCnfPassword.getText().toString())){
                     binding.inputPassword.setError("Password mismatch");
+                    Toast.makeText(SignUpWithEmailPassword.this, "wrong password", Toast.LENGTH_SHORT).show();
                 }
                 else{
 
@@ -111,9 +112,9 @@ public class SignUpWithEmailPassword extends AppCompatActivity {
 
     void addUserToDatabase(FirebaseUser user){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("user");
-        UserDetails details=new UserDetails(user.getDisplayName(), user.getEmail());
+        UserDetails details=new UserDetails( user.getEmail(),auth.getUid());
         Toast.makeText(SignUpWithEmailPassword.this, "Name: "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
-        ref.child(auth.getUid()).setValue(details);
+        //details.setUniqueId(ref.getKey()); //uniqueid that will be used further as jobstore id if this user creates one
+        database.getReference("user").child(auth.getUid()).setValue(details);
     }
 }

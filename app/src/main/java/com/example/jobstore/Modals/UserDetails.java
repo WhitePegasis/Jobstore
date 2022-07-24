@@ -1,13 +1,42 @@
 package com.example.jobstore.Modals;
 
 public class UserDetails {
-    private String name,email,adminPageCode,lastEnteredJobStoreId;
-    private boolean isAdmin;
+    private String name,email, currentJobStoreKey,uid, myStoreKey, uniqueId;
 
-    public UserDetails(String name, String email) {
-        this.name = name;
+    public UserDetails() {
+    }
+
+    public UserDetails( String email, String uid) {
+        this.name = "name";
         this.email = email;
-        this.isAdmin=false;
+        this.uid = uid;
+        this.myStoreKey="";
+        this.currentJobStoreKey="";
+    }
+
+    public String getCurrentJobStoreKey() {
+        return currentJobStoreKey;
+    }
+
+    public void setCurrentJobStoreKey(String currentJobStoreKey) {
+        this.currentJobStoreKey = currentJobStoreKey;
+    }
+
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getMyStoreKey() {
+        return myStoreKey;
+    }
+
+    public void setMyStoreKey(String myStoreKey) {
+        this.myStoreKey = myStoreKey;
     }
 
     public String getName() {
@@ -26,27 +55,12 @@ public class UserDetails {
         this.email = email;
     }
 
-    public boolean getIsAdmin() {
-        return isAdmin;
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
-    public void setIsAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
-
-    public String getAdminPageCode() {
-        return adminPageCode;
-    }
-
-    public void setAdminPageCode(String adminPageCode) {
-        this.adminPageCode = adminPageCode;
-    }
-
-    public String getLastEnteredJobStoreId() {
-        return lastEnteredJobStoreId;
-    }
-
-    public void setLastEnteredJobStoreId(String lastEnteredJobStoreId) {
-        this.lastEnteredJobStoreId = lastEnteredJobStoreId;
+    public String getUniqueId() {
+        return uniqueId;
     }
 }

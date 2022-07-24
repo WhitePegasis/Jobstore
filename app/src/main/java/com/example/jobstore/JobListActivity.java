@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RecoverySystem;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,7 +22,10 @@ import com.example.jobstore.Adapters.AvailableJobAdapter;
 import com.example.jobstore.Modals.JobDetailModal;
 import com.example.jobstore.Modals.UserDetails;
 import com.example.jobstore.databinding.ActivityJobListBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class JobListActivity extends AppCompatActivity {
+
     FirebaseDatabase database;
     FirebaseAuth auth;
     AvailableJobAdapter jobAdapter;
@@ -41,6 +46,9 @@ public class JobListActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private EditText companyName,packageValue, jobType, lastDate, jobLink;
     private Button postBtn, cancelBtn;
+    private UserDetails userDetails;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +62,23 @@ public class JobListActivity extends AppCompatActivity {
         binding.recyclerView.setAdapter(jobAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        database.getReference().child("jobs").addValueEventListener(new ValueEventListener() {
+        //getting user detail
+        getUserDetail();
+
+
+        //add a new job
+        binding.addNewJobBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createNewJobPostDialog();
+            }
+        });
+
+
+    }
+
+    private void getJobListFromDatabase() {
+        database.getReference().child("jobs").child(userDetails.getCurrentJobStoreKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 jobList.clear();
@@ -72,17 +96,6 @@ public class JobListActivity extends AppCompatActivity {
                 Toast.makeText(JobListActivity.this, "Error loading...", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-        binding.addNewJobBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createNewJobPostDialog();
-            }
-        });
-
-
-
     }
 
     public void createNewJobPostDialog(){
@@ -102,6 +115,7 @@ public class JobListActivity extends AppCompatActivity {
         dialog=dialogBuilder.create();
         dialog.show();
 
+        //adding new job to database
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,6 +136,39 @@ public class JobListActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    private void getUserDetail() {
+
+        database.getReference().child("user").child(auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    userDetails=task.getResult().getValue(UserDetails.class);
+
+                    //get all job list from db
+                    getJobListFromDatabase();
+
+                    //if current user is admin
+                    checkAdmin();
+
+                }
+            }
+        });
+    }
+
+    private void checkAdmin() {
+        //if this user is admin make the delete button visible
+
+        /*if(userDetails.getCurrentJobStoreKey().equals(userDetails.getMyStoreKey())){
+            do something
+        }*/
+
+        Toast.makeText(this, ""+userDetails.getMyStoreKey(), Toast.LENGTH_SHORT).show();
+
     }
 
     private boolean checkAllFieldsAreFilledProperly() {
@@ -154,12 +201,12 @@ public class JobListActivity extends AppCompatActivity {
     //pushing new job details to firebase
     private void addNewJobToDatabase() {
 
-        DatabaseReference ref = database.getReference("jobs");
+        DatabaseReference ref = database.getReference("jobs").child(userDetails.getCurrentJobStoreKey()).push();
         JobDetailModal details=new JobDetailModal(companyName.getText().toString(),packageValue.getText().toString(),
                 jobType.getText().toString(),lastDate.getText().toString(),jobLink.getText().toString(),0,0,
-                auth.getUid());
+                auth.getUid(),ref.getKey());
 
-        ref.push().setValue(details);
+        ref.setValue(details);
 
     }
 
@@ -174,6 +221,7 @@ public class JobListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout:
+                FirebaseDatabase.getInstance().getReference("user").child(auth.getUid()).child("currentJobStoreKey").setValue("");
                 FirebaseAuth.getInstance().signOut();
                 Toast.makeText(this, "Logging out", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(JobListActivity.this,LogInWithEmailPassword.class));
