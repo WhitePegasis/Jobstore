@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,25 +48,27 @@ public class OptionsAfterSignIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityOptionsAfterSignInBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
         database=FirebaseDatabase.getInstance();
         auth=FirebaseAuth.getInstance();
         user= auth.getCurrentUser();
 
-        getUserDetail();
+        //if user previously entered into a jobstore redirect him directly there
+        //getUserDetail();
 
+        binding=ActivityOptionsAfterSignInBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-
+        //create new jobstore
         binding.createNewJobStoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(OptionsAfterSignIn.this, "got user details: "+userDetails.getEmail(), Toast.LENGTH_SHORT).show();
-               createNewStore();
+                //Toast.makeText(OptionsAfterSignIn.this, "Got user details: "+userDetails.getEmail(), Toast.LENGTH_SHORT).show();
+                createNewStore();
 
             }
         });
 
+        //enter existing jobstore
         binding.enterExistingJobStoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,8 +96,25 @@ public class OptionsAfterSignIn extends AppCompatActivity {
         enterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseDatabase.getInstance().getReference("user").child(auth.getUid()).child("currentJobStoreKey").setValue(inputJobStoreId.getText().toString());
-                gotoJobListActivity();
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("jobs");
+                rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.hasChild(inputJobStoreId.getText().toString())) {
+                            FirebaseDatabase.getInstance().getReference("user").child(auth.getUid()).child("currentJobStoreKey").setValue(inputJobStoreId.getText().toString());
+                            gotoJobListActivity();
+                        }
+                        else{
+                            Toast.makeText(OptionsAfterSignIn.this, "Invalid Job Id", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
         });
 
@@ -110,32 +130,46 @@ public class OptionsAfterSignIn extends AppCompatActivity {
     }
 
     private Boolean createNewStore() {
-        DatabaseReference myRef = database.getReference().child("jobs").child(userDetails.getCurrentJobStoreKey()).push();
-        String key = myRef.getKey();
 
-        // check if current user already has a job store if not put this jobstore id to it mystorekey, also to its currentjobstorekey
-        if(userDetails.getMyStoreKey().isEmpty()){
-            userDetails.setMyStoreKey(key);
-            userDetails.setCurrentJobStoreKey(key);
-            database.getReference().child("user").child(auth.getUid())
-                    .child("myStoreKey").setValue(key);
-            database.getReference().child("user").child(auth.getUid())
-                    .child("currentJobStoreKey").setValue(key);
+        FirebaseDatabase database= FirebaseDatabase.getInstance();
+        auth=FirebaseAuth.getInstance();
+        user= auth.getCurrentUser();
+        database.getReference().child("user").child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                userDetails=snapshot.getValue(UserDetails.class);
 
-            gotoJobListActivity();
-        }
-        else{
-            return false;
-        }
-        //create an empty new jobstore node under this key
+                //Toast.makeText(OptionsAfterSignIn.this, "got user details: "+userDetails.getName(), Toast.LENGTH_SHORT).show();
+                DatabaseReference myRef = database.getReference().child("jobs").child(userDetails.getCurrentJobStoreKey()).push();
+                String key = myRef.getKey();
 
-        //send him to joblist activity
-        //*********************************************************************
+                // check if current user already has a job store if not put this jobstore id to it mystorekey, also to its currentjobstorekey
+                if(userDetails.getMyStoreKey().isEmpty()){
+                    userDetails.setMyStoreKey(key);
+                    userDetails.setCurrentJobStoreKey(key);
+                    database.getReference().child("user").child(auth.getUid())
+                            .child("myStoreKey").setValue(key);
+                    database.getReference().child("user").child(auth.getUid())
+                            .child("currentJobStoreKey").setValue(key);
+
+                    gotoJobListActivity();
+                }
+                else{
+                    Toast.makeText(OptionsAfterSignIn.this, "You already have an active Job Store", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         return true;
     }
 
-    private void getUserDetail() {
+    /*private void getUserDetail() {
 
         database.getReference().child("user").child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -151,30 +185,15 @@ public class OptionsAfterSignIn extends AppCompatActivity {
             }
         });
     }
-   /* private void getUserDetail() {
 
-        database.getReference().child("user").child(auth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                }
-                else {
-                    userDetails=task.getResult().getValue(UserDetails.class);
-                    checkUser(userDetails);
-                    Toast.makeText(OptionsAfterSignIn.this, "got user details: "+userDetails.getName(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }*/
-
+    //if user previously entered into a jobstore redirect him directly there
     private void checkUser(UserDetails ud){
         this.userDetails=ud;
-        Toast.makeText(this, "Current key: "+ud.getCurrentJobStoreKey(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Current key: "+ud.getCurrentJobStoreKey(), Toast.LENGTH_SHORT).show();
         if(!ud.getCurrentJobStoreKey().isEmpty()){
             gotoJobListActivity();
         }
-    }
+    }*/
 
     private void gotoJobListActivity(){
         Intent intent= new Intent(OptionsAfterSignIn.this, JobListActivity.class);
@@ -185,5 +204,6 @@ public class OptionsAfterSignIn extends AppCompatActivity {
         startActivity(intent);
         finish();//to close this activity
     }
+
 
 }

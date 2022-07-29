@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RecoverySystem;
@@ -15,10 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.jobstore.Adapters.AvailableJobAdapter;
+import com.example.jobstore.Adapters.ItemClickListener;
 import com.example.jobstore.Modals.JobDetailModal;
 import com.example.jobstore.Modals.UserDetails;
 import com.example.jobstore.databinding.ActivityJobListBinding;
@@ -33,8 +36,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class JobListActivity extends AppCompatActivity {
+public class JobListActivity extends AppCompatActivity implements ItemClickListener {
 
     FirebaseDatabase database;
     FirebaseAuth auth;
@@ -47,6 +51,7 @@ public class JobListActivity extends AppCompatActivity {
     private EditText companyName,packageValue, jobType, lastDate, jobLink;
     private Button postBtn, cancelBtn;
     private UserDetails userDetails;
+    private DatePickerDialog picker;
 
 
     @Override
@@ -61,6 +66,7 @@ public class JobListActivity extends AppCompatActivity {
         jobAdapter=new AvailableJobAdapter(jobList,this);
         binding.recyclerView.setAdapter(jobAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        jobAdapter.setClickListener(this);
 
         //getting user detail
         getUserDetail();
@@ -108,6 +114,27 @@ public class JobListActivity extends AppCompatActivity {
         lastDate=(EditText) jobPostPopupView.findViewById(R.id.inputEndDate);
         jobLink=(EditText) jobPostPopupView.findViewById(R.id.inputJobLink);
 
+        lastDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar calendar = Calendar.getInstance();
+
+                int day= calendar.get(Calendar.DAY_OF_MONTH);
+                int month= calendar.get(Calendar.MONTH);
+                int year= calendar.get(Calendar.YEAR);
+
+                picker= new DatePickerDialog(JobListActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int y, int m, int d) {
+                        lastDate.setText(d+"/"+(m+1)+"/"+y);
+                    }
+                },year,month,day);
+
+                picker.show();
+            }
+
+        });
+
         postBtn=(Button) jobPostPopupView.findViewById(R.id.postBtn);
         cancelBtn=(Button) jobPostPopupView.findViewById(R.id.cancelBtn);
 
@@ -152,23 +179,10 @@ public class JobListActivity extends AppCompatActivity {
                     //get all job list from db
                     getJobListFromDatabase();
 
-                    //if current user is admin
-                    checkAdmin();
 
                 }
             }
         });
-    }
-
-    private void checkAdmin() {
-        //if this user is admin make the delete button visible
-
-        /*if(userDetails.getCurrentJobStoreKey().equals(userDetails.getMyStoreKey())){
-            do something
-        }*/
-
-        Toast.makeText(this, ""+userDetails.getMyStoreKey(), Toast.LENGTH_SHORT).show();
-
     }
 
     private boolean checkAllFieldsAreFilledProperly() {
@@ -227,8 +241,58 @@ public class JobListActivity extends AppCompatActivity {
                 startActivity(new Intent(JobListActivity.this,LogInWithEmailPassword.class));
                 break;
 
-            case R.id.settings:
-                Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show();
+            case R.id.shareJobId:
+
+                FirebaseDatabase database= FirebaseDatabase.getInstance();
+                auth=FirebaseAuth.getInstance();
+                database.getReference().child("user").child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        userDetails=snapshot.getValue(UserDetails.class);
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, userDetails.getCurrentJobStoreKey());
+                        sendIntent.setType("text/plain");
+                        Intent shareIntent = Intent.createChooser(sendIntent, null);
+                        startActivity(shareIntent);
+                        //Toast.makeText(OptionsAfterSignIn.this, "got user details: "+userDetails.getName(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(JobListActivity.this, "Error fetching job id", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+
+            case R.id.shareYourJobId:
+                database= FirebaseDatabase.getInstance();
+                auth=FirebaseAuth.getInstance();
+                database.getReference().child("user").child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        userDetails=snapshot.getValue(UserDetails.class);
+
+                        if(userDetails.getMyStoreKey().isEmpty()){
+                            Toast.makeText(JobListActivity.this, "You don't have a Job store yet.", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, userDetails.getMyStoreKey());
+                            sendIntent.setType("text/plain");
+                            Intent shareIntent = Intent.createChooser(sendIntent, null);
+                            startActivity(shareIntent);
+                        }
+
+                        //Toast.makeText(OptionsAfterSignIn.this, "got user details: "+userDetails.getName(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(JobListActivity.this, "Error fetching your job id", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
 
             default:
@@ -236,5 +300,21 @@ public class JobListActivity extends AppCompatActivity {
 
         }
         return true;
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        //sharing text
+        JobDetailModal job=jobList.get(position);
+        String message="Company Name: "+job.getCompanyName()+"\nJob Type: "+job.getCompanyName()+"\nPackage: "+job.getPackageAmount()+
+                "\nJob Link: "+job.getJobLink()+"\nLast Date to apply: "+ job.getEndDate();
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 }

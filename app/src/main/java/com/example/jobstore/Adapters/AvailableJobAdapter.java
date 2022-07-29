@@ -1,6 +1,8 @@
 package com.example.jobstore.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ public class AvailableJobAdapter extends RecyclerView.Adapter<AvailableJobAdapte
 
     ArrayList<JobDetailModal> arraylist;
     Context context;
+    private ItemClickListener clickListener;
 
     public AvailableJobAdapter(ArrayList<JobDetailModal> array, Context context) {
         this.arraylist = array;
@@ -43,13 +46,30 @@ public class AvailableJobAdapter extends RecyclerView.Adapter<AvailableJobAdapte
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
         JobDetailModal job= arraylist.get(position);
-        holder.companyName.setText(job.getCompanyName());
-        holder.jobType.setText(job.getJobType());
-        holder.packageAmount.setText(job.getPackageAmount());
-        holder.jobLink.setText(job.getJobLink());
-        holder.endDate.setText(job.getEndDate());
+        String cName,jType,pAmount,jLink,eDate;
+
+        cName=job.getCompanyName();
+        jType=job.getJobType();
+        pAmount=job.getPackageAmount();
+        jLink=job.getJobLink();
+        eDate=job.getEndDate();
+        holder.companyName.setText(cName);
+
+        String jobTypeString = "<b>" + "Job Type: "+"</b> " + jType;
+        holder.jobType.setText(Html.fromHtml(jobTypeString));
+
+        String packageAmountString = "<b>" + "Package: "+"</b> " +pAmount;
+        holder.packageAmount.setText(Html.fromHtml(packageAmountString));
+
+        String jobLinkString = "<b>" + "Job Apply Link: "+"</b> " +jLink;
+        holder.jobLink.setText(Html.fromHtml(jobLinkString));
+
+        String endDateString = "<b>" + "Last Date to Apply: "+"</b> " +eDate ;
+        holder.endDate.setText(Html.fromHtml(endDateString));
+
         holder.deletePost.setContentDescription(job.getJobId());
 
+        //setting onlick listener in delete button
         FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -77,7 +97,10 @@ public class AvailableJobAdapter extends RecyclerView.Adapter<AvailableJobAdapte
                 }
             }
         });
+    }
 
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.clickListener = itemClickListener;
     }
 
     @Override
@@ -85,9 +108,9 @@ public class AvailableJobAdapter extends RecyclerView.Adapter<AvailableJobAdapte
         return arraylist.size();
     }
 
-    public class viewholder extends RecyclerView.ViewHolder {
+    public class viewholder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView companyName,packageAmount,jobType,endDate,jobLink,postedBy;
-        ImageView upVote,downVote, deletePost;
+        ImageView upVote,downVote, deletePost, shareImg;
         public viewholder(@NonNull View itemView) {
             super(itemView);
             companyName=itemView.findViewById(R.id.companyNameTv);
@@ -99,6 +122,13 @@ public class AvailableJobAdapter extends RecyclerView.Adapter<AvailableJobAdapte
             upVote=itemView.findViewById(R.id.upVoteImg);
             downVote=itemView.findViewById(R.id.downVoteImg);
             deletePost=itemView.findViewById(R.id.deletePostImg);
+            shareImg=itemView.findViewById(R.id.shareImg);
+            shareImg.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (clickListener != null) clickListener.onClick(view, getAdapterPosition());
         }
     }
 }
